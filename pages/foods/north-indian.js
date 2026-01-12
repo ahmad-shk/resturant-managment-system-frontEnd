@@ -4,16 +4,17 @@ import FoodItem from "../../components/FoodItem";
 import FoodItemContainer from "../../components/FoodItemContainer";
 import FoodLinks from "../../components/FoodLinks";
 import { fetchFoods } from "../../redux/slices/foodSlice";
+import FoodItemData from "../../demoData/foodItem";
 
 const northIndian = () => {
-  const {
-    food: { data },
-  } = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const northItems = data.filter((item) => item.category === "north-indian");
-
+  const [northItems, setNorthIndianItems] = React.useState([]);
   useEffect(() => {
-    dispatch(fetchFoods());
+    if (FoodItemData) {
+      const filtered = FoodItemData.filter(
+        (item) => item.category.toLowerCase() === "north indian"
+      );
+      setNorthIndianItems(filtered);
+    } 
   }, []);
   return (
     <>

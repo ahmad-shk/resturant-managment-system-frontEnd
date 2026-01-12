@@ -17,37 +17,26 @@ const order = () => {
   const foodName = cart.map((item) => item.name);
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    if (user === null) {
-      Router.push("/login");
-    }
-  }, [user]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    await axios
-      .post(`${process.env.NEXT_PUBLIC_BASE_URL}/order/new`, {
-        name,
-        email,
-        foodName,
-        address,
-      })
-      .then((data) => {
-        setLoading(false);
-        enqueueSnackbar(data.data.message, {
-          variant: "success",
-          autoHideDuration: 3000,
-        });
-        Router.push("/thankyou");
-      })
-      .catch((err) => {
-        setLoading(false);
-        enqueueSnackbar(err.response.data.message, {
+
+    if (!name || !email || !address || foodName.length === 0) {
+      enqueueSnackbar(
+        foodName.length === 0 ? "Your cart is empty!" : "Please fill all the fields!", 
+        {
           variant: "error",
-          autoHideDuration: 3000,
-        });
-      });
+          autoHideDuration: 2000,
+        }
+      );
+      return;
+    }
+
+    enqueueSnackbar("Order placed! Redirecting...", {
+      variant: "info",
+      autoHideDuration: 2000,
+    });
+
+    Router.push("/thankyou");
   };
 
   return (

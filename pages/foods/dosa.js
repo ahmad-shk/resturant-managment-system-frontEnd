@@ -3,17 +3,17 @@ import { useSelector, useDispatch } from "react-redux";
 import FoodItem from "../../components/FoodItem";
 import FoodItemContainer from "../../components/FoodItemContainer";
 import FoodLinks from "../../components/FoodLinks";
-import { fetchFoods } from "../../redux/slices/foodSlice";
+import FoodItemData from "../../demoData/foodItem";
 
 const dosa = () => {
-  const {
-    food: { data },
-  } = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const dosaItems = data.filter((item) => item.category === "dosa");
-
+  const [dosaItems, setDosaItems] = React.useState([]);
   useEffect(() => {
-    dispatch(fetchFoods());
+    if (FoodItemData) {
+      const filtered = FoodItemData.filter(
+        (item) => item.category.toLowerCase() === "dosa"
+      );
+      setDosaItems(filtered);
+    }
   }, []);
   return (
     <>

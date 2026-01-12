@@ -4,16 +4,17 @@ import FoodItem from "../../components/FoodItem";
 import FoodItemContainer from "../../components/FoodItemContainer";
 import { fetchFoods } from "../../redux/slices/foodSlice";
 import FoodLinks from "../../components/FoodLinks";
+import FoodItemData from "../../demoData/foodItem";
 
 const snacks = () => {
-  const {
-    food: { data },
-  } = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const snacksItems = data.filter((item) => item.category === "snacks");
-
+  const [snacksItems, setSnacksItems] = React.useState([]);
   useEffect(() => {
-    dispatch(fetchFoods());
+    if (FoodItemData) {
+      const filtered = FoodItemData.filter(
+        (item) => item.category.toLowerCase() === "snacks"
+      );
+      setSnacksItems(filtered);
+    }
   }, []);
   return (
     <>

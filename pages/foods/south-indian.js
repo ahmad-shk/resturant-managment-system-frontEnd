@@ -4,16 +4,17 @@ import FoodItem from "../../components/FoodItem";
 import FoodItemContainer from "../../components/FoodItemContainer";
 import { fetchFoods } from "../../redux/slices/foodSlice";
 import FoodLinks from "../../components/FoodLinks";
+import FoodItemData from "../../demoData/foodItem";
 
 const southIndian = () => {
-  const {
-    food: { data },
-  } = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const southItems = data.filter((item) => item.category === "south-indian");
-
+  const [southItems, setSouthItems] = React.useState([]);
   useEffect(() => {
-    dispatch(fetchFoods());
+    if (FoodItemData) {
+      const filtered = FoodItemData.filter(
+        (item) => item.category.toLowerCase() === "south indian"
+      );
+      setSouthItems(filtered);
+    }
   }, []);
   return (
     <>
