@@ -1,19 +1,29 @@
 "use client"
 
 import type React from "react"
+
 import { ArrowLeft, MapPin, CreditCard, Eye, EyeOff, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/app/providers"
-import { useOrders } from "@/app/providers"
 import { useToast } from "@/components/toast-provider"
+import { useAuth } from "@/lib/auth-context"
+import { saveOrderToFirebase } from "@/lib/firebase-utils"
+import type { OrderData } from "@/lib/firebase-utils"
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, clearCart } = useCart()
-  const { addOrder } = useOrders()
   const { addToast } = useToast()
+  const { user, deviceId, isAuthenticated } = useAuth()
+
+  useEffect(() => {
+    if (!isAuthenticated && !user) {
+      addToast("Please login to place an order", "error")
+      router.push("/auth/login")
+    }
+  }, [isAuthenticated, user, router, addToast])
 
   const [formData, setFormData] = useState({
     name: "",
@@ -40,7 +50,7 @@ export default function CheckoutPage() {
   const delivery = subtotal > 500 ? 0 : 40
   const total = subtotal + tax + delivery
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formData.name || !formData.email || !formData.address) {
@@ -65,11 +75,11 @@ export default function CheckoutPage() {
 
     setIsLoading(true)
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const newOrderId = `ORD-${Math.floor(Math.random() * 1000000)}`
       setOrderId(newOrderId)
 
-      addOrder({
+      const orderData: OrderData = {
         id: newOrderId,
         items: items,
         subtotal: subtotal,
@@ -84,15 +94,25 @@ export default function CheckoutPage() {
         status: "confirmed",
         currentStatusIndex: 0,
         createdAt: new Date().getTime(),
-      })
+        userId: user?.uid || "",
+        deviceId: deviceId || "",
+      }
 
-      setOrderPlaced(true)
-      addToast("Payment successful! Order placed.", "success")
-      clearCart()
+      try {
+        await saveOrderToFirebase(orderData)
 
-      setTimeout(() => {
-        router.push(`/track-order?orderId=${newOrderId}`)
-      }, 2000)
+        setOrderPlaced(true)
+        addToast("Payment successful! Order placed.", "success")
+        clearCart()
+
+        setTimeout(() => {
+          router.push(`/track-order?orderId=${newOrderId}`)
+        }, 2000)
+      } catch (error) {
+        console.error("Error saving order:", error)
+        addToast("Failed to save order. Please try again.", "error")
+        setIsLoading(false)
+      }
     }, 2000)
   }
 

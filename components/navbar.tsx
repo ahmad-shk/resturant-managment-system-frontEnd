@@ -1,10 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { ShoppingCart, Menu, X, Sparkles, User, Globe, ChevronDown } from "lucide-react"
+import { ShoppingCart, Menu, X, Sparkles, User, Globe, ChevronDown, LogOut, Mail } from "lucide-react"
 import { useState } from "react"
 import { useCart } from "@/app/providers"
 import { useLanguage } from "@/lib/use-language"
+import { useAuth } from "@/lib/auth-context"
 import type { Language } from "@/lib/translations"
 
 export default function Navbar() {
@@ -13,6 +14,7 @@ export default function Navbar() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const { totalItems } = useCart()
   const { language, setLanguage, t } = useLanguage()
+  const { user, isAuthenticated, signOut } = useAuth()
 
   const languages: { code: Language; name: string }[] = [
     { code: "en", name: "English" },
@@ -20,6 +22,15 @@ export default function Navbar() {
     { code: "de", name: "Deutsch" },
     { code: "nl", name: "Nederlands" },
   ]
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      setIsUserMenuOpen(false)
+    } catch (error) {
+      console.error("Error logging out:", error)
+    }
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-orange-50 to-white border-b-2 border-orange-200 shadow-md">
@@ -107,24 +118,72 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* User Menu */}
+            {/* User Menu - Added user profile dropdown with email and logout */}
             <div className="relative hidden md:block">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="p-2.5 hover:bg-orange-100 rounded-lg transition-colors"
               >
-                <User className="w-6 h-6 text-gray-700 group-hover:text-orange-600 transition-colors" />
+                <User className="w-6 h-6 text-gray-700 hover:text-orange-600 transition-colors" />
               </button>
 
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-orange-200 py-2 z-50 animate-in fade-in slide-in-from-top-2">
-                  <Link
-                    href="/order-history"
-                    className="block px-4 py-2 text-gray-700 hover:bg-orange-50 transition-colors"
-                    onClick={() => setIsUserMenuOpen(false)}
-                  >
-                    {t("orderHistory")}
-                  </Link>
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-orange-200 z-50 animate-in fade-in slide-in-from-top-2">
+                  {isAuthenticated && user ? (
+                    <>
+                      {/* User Info Section */}
+                      <div className="px-4 py-4 border-b border-orange-200 bg-gradient-to-r from-orange-50 to-white">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate">{user.displayName || "User"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                          <Mail className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">{user.email}</span>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <Link
+                        href="/order-history"
+                        className="block px-4 py-3 text-gray-700 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        {t("orderHistory")}
+                      </Link>
+
+                      {/* Logout Button */}
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 font-medium"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* Not Logged In */}
+                      <Link
+                        href="/auth/login"
+                        className="block px-4 py-3 text-gray-700 hover:bg-orange-50 transition-colors border-b border-orange-100 font-medium"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        href="/auth/signup"
+                        className="block px-4 py-3 text-orange-600 hover:bg-orange-50 transition-colors font-medium"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -193,6 +252,41 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
+
+            {/* Mobile User Section */}
+            {isAuthenticated && user ? (
+              <div className="px-4 py-3 border-t border-orange-200 mt-2">
+                <p className="text-sm font-semibold text-gray-700 mb-2">{user.displayName || "User Account"}</p>
+                <p className="text-xs text-gray-600 mb-3 truncate">{user.email}</p>
+                <button
+                  onClick={() => {
+                    handleLogout()
+                    setIsOpen(false)
+                  }}
+                  className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="px-4 py-3 border-t border-orange-200 mt-2 space-y-2">
+                <Link
+                  href="/auth/login"
+                  className="block w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 rounded-lg text-center transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="block w-full bg-orange-100 hover:bg-orange-200 text-orange-700 font-semibold py-2 rounded-lg text-center transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

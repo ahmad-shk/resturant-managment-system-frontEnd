@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
+import { Mail, Phone, MapPin, Clock } from "lucide-react"
 import { useLanguage } from "@/lib/use-language"
 import { useToast } from "@/components/toast-provider"
 
@@ -54,21 +54,27 @@ export default function ContactPage() {
               {t("contactTitle")}
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">{t("contactSubtitle")}</p>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Get in touch with Swirly - Your favorite food delivery service
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Contact Info */}
-          <div className="space-y-8">
+        {/* Company Details */}
+        <div className="max-w-4xl mx-auto">
+          {/* Contact Information */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Contact Information</h2>
+
             <div className="flex gap-6 items-start group">
               <div className="p-4 bg-orange-100 rounded-xl group-hover:bg-orange-200 transition-colors flex-shrink-0">
                 <Mail className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Email</h3>
-                <a href="mailto:hello@swirly.com" className="text-orange-600 hover:text-orange-700 font-medium">
-                  hello@swirly.com
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
+                <a href="mailto:info@swirly.com" className="text-orange-600 hover:text-orange-700 font-medium">
+                  info@swirly.com
                 </a>
+                <p className="text-sm text-gray-600 mt-1">We respond within 24 hours</p>
               </div>
             </div>
 
@@ -77,10 +83,11 @@ export default function ContactPage() {
                 <Phone className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("phone")}</h3>
-                <a href="tel:+1234567890" className="text-orange-600 hover:text-orange-700 font-medium">
-                  +1 (234) 567-890
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
+                <a href="tel:+15550000000" className="text-orange-600 hover:text-orange-700 font-medium">
+                  +1 (555) 000-0000
                 </a>
+                <p className="text-sm text-gray-600 mt-1">Available 24/7</p>
               </div>
             </div>
 
@@ -89,86 +96,46 @@ export default function ContactPage() {
                 <MapPin className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Location</h3>
-                <p className="text-gray-600">123 Food Street, Flavor City, FC 12345</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Location</h3>
+                <p className="text-gray-600 font-medium">123 Food Street</p>
+                <p className="text-gray-600 font-medium">Flavor City, FC 12345</p>
               </div>
             </div>
           </div>
 
-          {/* Contact Form */}
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8 md:p-10 space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
-                {t("name")}
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 transition-colors"
-                placeholder="John Doe"
-              />
+          {/* Business Hours & Info */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Business Hours</h2>
+
+            <div className="flex gap-6 items-start group">
+              <div className="p-4 bg-orange-100 rounded-xl group-hover:bg-orange-200 transition-colors flex-shrink-0">
+                <Clock className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="space-y-3 w-full">
+                <div className="flex justify-between">
+                  <span className="text-gray-900 font-semibold">Monday - Friday</span>
+                  <span className="text-gray-600">10:00 AM - 11:00 PM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-900 font-semibold">Saturday</span>
+                  <span className="text-gray-600">11:00 AM - 12:00 AM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-900 font-semibold">Sunday</span>
+                  <span className="text-gray-600">11:00 AM - 11:00 PM</span>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
-                {t("email")}
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 transition-colors"
-                placeholder="john@example.com"
-              />
+            <div className="pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">About Swirly</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Swirly is a premium food delivery service dedicated to bringing delicious meals from your favorite
+                restaurants right to your doorstep. With fast delivery, fresh food, and excellent customer service,
+                we're committed to making your dining experience exceptional.
+              </p>
             </div>
-
-            <div>
-              <label htmlFor="phone" className="block text-sm font-semibold text-gray-900 mb-2">
-                {t("phone")}
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 transition-colors"
-                placeholder="+1 (234) 567-890"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block text-sm font-semibold text-gray-900 mb-2">
-                {t("message")}
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows={5}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 transition-colors resize-none"
-                placeholder="Tell us how we can help..."
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-            >
-              <Send className="w-5 h-5" />
-              {isLoading ? t("loading") : t("sendMessage")}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </main>

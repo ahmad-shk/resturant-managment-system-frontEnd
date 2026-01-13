@@ -1,13 +1,42 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ShoppingBag, User, ChevronRight, Calendar, DollarSign } from "lucide-react"
-import { useOrders } from "@/app/providers"
+import { useAuth } from "@/lib/auth-context"
+import { getOrdersByUserId, getOrdersByDeviceId } from "@/lib/firebase-utils"
 import { useLanguage } from "@/lib/use-language"
+import type { OrderData } from "@/lib/firebase-utils"
 
 export default function OrderHistoryPage() {
-  const { orders } = useOrders()
+  const { user, deviceId } = useAuth()
   const { t } = useLanguage()
+  const [firebaseOrders, setFirebaseOrders] = useState<OrderData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true)
+      try {
+        let orders: OrderData[] = []
+
+        if (user?.uid) {
+          orders = await getOrdersByUserId(user.uid)
+        } else if (deviceId) {
+          orders = await getOrdersByDeviceId(deviceId)
+        }
+
+        setFirebaseOrders(orders)
+      } catch (error) {
+        console.error("Error fetching orders:", error)
+        setFirebaseOrders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
+  }, [user?.uid, deviceId])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -34,6 +63,17 @@ export default function OrderHistoryPage() {
     })
   }
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading your orders...</p>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
@@ -56,7 +96,7 @@ export default function OrderHistoryPage() {
         </div>
 
         {/* Orders List or Empty State */}
-        {orders.length === 0 ? (
+        {firebaseOrders.length === 0 ? (
           <div className="text-center py-16">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-full mb-6">
               <ShoppingBag className="w-10 h-10 text-orange-600" />
@@ -72,7 +112,7 @@ export default function OrderHistoryPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => (
+            {firebaseOrders.map((order) => (
               <div
                 key={order.id}
                 className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"

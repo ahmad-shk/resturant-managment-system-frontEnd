@@ -1,8 +1,9 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useState, type ReactNode } from "react"
 import { ToastProvider } from "@/components/toast-provider"
 import { LanguageProvider } from "@/components/language-provider"
+import { AuthProvider } from "@/lib/auth-context"
 
 export interface CartItem {
   id: number
@@ -69,88 +70,14 @@ export function useCart() {
   return context
 }
 
-interface Order {
-  id: string
-  items: CartItem[]
-  subtotal: number
-  tax: number
-  delivery: number
-  total: number
-  customerName: string
-  customerEmail: string
-  deliveryAddress: string
-  paymentMethod: string
-  orderDate: number
-  status: "confirmed" | "preparing" | "ready" | "on-the-way" | "delivered"
-  currentStatusIndex: number
-  createdAt: number
-}
-
-interface OrderContextType {
-  orders: Order[]
-  addOrder: (order: Order) => void
-  getOrderById: (id: string) => Order | undefined
-  updateOrderStatus: (id: string, statusIndex: number) => void
-}
-
-const OrderContext = createContext<OrderContextType | undefined>(undefined)
-
-export function OrderProvider({ children }: { children: ReactNode }) {
-  const [orders, setOrders] = useState<Order[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("orders")
-      return saved ? JSON.parse(saved) : []
-    }
-    return []
-  })
-
-  const addOrder = (order: Order) => {
-    const newOrders = [...orders, order]
-    setOrders(newOrders)
-    if (typeof window !== "undefined") {
-      localStorage.setItem("orders", JSON.stringify(newOrders))
-    }
-  }
-
-  const getOrderById = (id: string) => {
-    return orders.find((order) => order.id === id)
-  }
-
-  const updateOrderStatus = useCallback((id: string, statusIndex: number) => {
-    setOrders((currentOrders) => {
-      const updatedOrders = currentOrders.map((order) =>
-        order.id === id ? { ...order, currentStatusIndex: statusIndex } : order,
-      )
-      if (typeof window !== "undefined") {
-        localStorage.setItem("orders", JSON.stringify(updatedOrders))
-      }
-      return updatedOrders
-    })
-  }, [])
-
-  return (
-    <OrderContext.Provider value={{ orders, addOrder, getOrderById, updateOrderStatus }}>
-      {children}
-    </OrderContext.Provider>
-  )
-}
-
-export function useOrders() {
-  const context = useContext(OrderContext)
-  if (!context) {
-    throw new Error("useOrders must be used within OrderProvider")
-  }
-  return context
-}
-
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <LanguageProvider>
-      <CartProvider>
-        <OrderProvider>
+      <AuthProvider>
+        <CartProvider>
           <ToastProvider>{children}</ToastProvider>
-        </OrderProvider>
-      </CartProvider>
+        </CartProvider>
+      </AuthProvider>
     </LanguageProvider>
   )
 }

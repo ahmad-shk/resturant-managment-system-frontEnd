@@ -1,9 +1,11 @@
 "use client"
 
-import { useOrders } from "@/app/providers"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, MapPin, Clock, Package } from "lucide-react"
+import { useState, useEffect } from "react"
+import { getOrderById } from "@/lib/firebase-utils"
+import type { OrderData } from "@/lib/firebase-utils"
 
 const STATUS_STEPS = ["Confirmed", "Preparing", "Ready", "On The Way", "Delivered"]
 
@@ -15,15 +17,41 @@ const getStatusColor = (index: number, currentIndex: number) => {
 
 export default function OrderDetailsPage() {
   const { id } = useParams()
-  const { getOrderById } = useOrders()
-  const order = getOrderById(id as string)
+  const router = useRouter()
+  const [order, setOrder] = useState<OrderData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        if (id) {
+          const fetchedOrder = await getOrderById(id as string)
+          setOrder(fetchedOrder || null)
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrder()
+  }, [id])
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </main>
+    )
+  }
 
   if (!order) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Order Not Found</h1>
-          <Link href="/orders" className="text-primary hover:underline">
+          <Link href="/order-history" className="text-primary hover:underline">
             Back to Orders
           </Link>
         </div>
@@ -45,7 +73,7 @@ export default function OrderDetailsPage() {
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <Link href="/orders" className="flex items-center gap-2 text-primary mb-8 hover:opacity-80 transition">
+        <Link href="/order-history" className="flex items-center gap-2 text-primary mb-8 hover:opacity-80 transition">
           <ArrowLeft className="w-5 h-5" />
           Back to Orders
         </Link>

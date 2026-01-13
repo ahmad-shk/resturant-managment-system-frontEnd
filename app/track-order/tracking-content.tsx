@@ -1,11 +1,14 @@
 "use client"
 
 import type React from "react"
+
 import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState, useRef } from "react"
 import { Truck, Home, ChefHat } from "lucide-react"
 import Link from "next/link"
-import { useOrders } from "@/app/providers"
+import { getOrderById } from "@/lib/firebase-utils"
+import { ref, onValue } from "firebase/database"
+import { rtdb } from "@/lib/firebase"
 
 interface OrderStatus {
   stage: number
@@ -20,17 +23,46 @@ interface OrderStatus {
 export default function TrackingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { getOrderById, updateOrderStatus } = useOrders()
   const orderId = searchParams.get("orderId") || "ORD-000000"
-  const [order, setOrder] = useState(() => getOrderById(orderId))
+  const [order, setOrder] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [currentStage, setCurrentStage] = useState(0)
-  const [timeRemaining, setTimeRemaining] = useState(120) // 2 minutes in seconds
-  const hasUpdatedRef = useRef(false) // prevent duplicate updates
+  const unsubscribeRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    const updatedOrder = getOrderById(orderId)
-    setOrder(updatedOrder)
-  }, [orderId, getOrderById])
+    const fetchAndListenToOrder = async () => {
+      try {
+        const firebaseOrder = await getOrderById(orderId)
+        if (firebaseOrder) {
+          setOrder(firebaseOrder)
+          setCurrentStage(firebaseOrder.currentStatusIndex || 0)
+
+          // Only update status when database changes, not on automatic timer
+          const orderRef = ref(rtdb, `orders/${orderId}`)
+          unsubscribeRef.current = onValue(orderRef, (snapshot) => {
+            if (snapshot.exists()) {
+              const updatedOrder = snapshot.val()
+              setOrder(updatedOrder)
+              setCurrentStage(updatedOrder.currentStatusIndex || 0)
+            }
+          })
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAndListenToOrder()
+
+    // Cleanup subscription on unmount
+    return () => {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current()
+      }
+    }
+  }, [orderId])
 
   const stages: OrderStatus[] = [
     {
@@ -80,50 +112,32 @@ export default function TrackingContent() {
     },
   ]
 
-  useEffect(() => {
-    const startTime = Date.now()
-    const totalDuration = 120000 // 2 minutes in milliseconds
+  const isOrderComplete = currentStage >= 4
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime
-      const remaining = Math.max(0, totalDuration - elapsed)
-      setTimeRemaining(Math.floor(remaining / 1000))
-
-      const progress = (elapsed / totalDuration) * 100
-      let newStage = 0
-      if (progress < 5)
-        newStage = 0 // Order Confirmed
-      else if (progress < 20)
-        newStage = 1 // Preparing Food
-      else if (progress < 40)
-        newStage = 2 // Ready for Pickup
-      else if (progress < 80)
-        newStage = 3 // On The Way
-      else if (progress < 100)
-        newStage = 4 // Arrived
-      else newStage = 5 // Completed
-
-      setCurrentStage(newStage)
-
-      if (newStage <= 4 && newStage > (order?.currentStatusIndex ?? -1)) {
-        updateOrderStatus(orderId, newStage)
-      }
-
-      if (progress >= 100) {
-        clearInterval(interval)
-      }
-    }, 500)
-
-    return () => clearInterval(interval)
-  }, [orderId, updateOrderStatus, order?.currentStatusIndex])
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading order tracking...</p>
+        </div>
+      </main>
+    )
   }
 
-  const isOrderComplete = currentStage >= 5
+  if (!order) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Order Not Found</h1>
+          <p className="text-gray-600 mb-6">The order you're looking for doesn't exist.</p>
+          <Link href="/foods" className="text-primary hover:underline font-semibold">
+            Continue Shopping
+          </Link>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
@@ -136,7 +150,7 @@ export default function TrackingContent() {
           </p>
           <div className="inline-block bg-white rounded-lg px-6 py-3 border-2 border-primary shadow-lg">
             <p className="text-lg font-bold text-primary">
-              {isOrderComplete ? "Order Delivered! 🎉" : `Time Remaining: ${formatTime(timeRemaining)}`}
+              {isOrderComplete ? "Order Delivered! 🎉" : "Status updates in real-time"}
             </p>
           </div>
         </div>
@@ -218,7 +232,7 @@ export default function TrackingContent() {
               Order Again
             </button>
           </Link>
-          <Link href="/orders">
+          <Link href="/order-history">
             <button className="px-6 py-3 bg-secondary text-white rounded-lg font-semibold hover:opacity-90 transition">
               My Orders
             </button>

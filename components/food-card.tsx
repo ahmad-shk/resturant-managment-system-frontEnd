@@ -8,7 +8,7 @@ import { useCart } from "@/app/providers"
 import { useToast } from "@/components/toast-provider"
 
 interface Food {
-  id: number
+  id: string
   name: string
   price: number
   rating: number
@@ -26,7 +26,7 @@ export default function FoodCard({ food, onCardClick }: { food: Food; onCardClic
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
     addToCart({
-      id: food.id,
+      id: Number.parseInt(food.id) || food.id.charCodeAt(0),
       name: food.name,
       price: food.price,
       image: food.image,
@@ -62,7 +62,7 @@ export default function FoodCard({ food, onCardClick }: { food: Food; onCardClic
           )}
         </div>
 
-        {/* Price Badge - Floating */}
+        {/* Price Badge */}
         <div className="absolute bottom-4 left-4 bg-white rounded-xl px-3 py-2 shadow-lg font-bold text-primary text-lg">
           ₹{food.price}
         </div>
