@@ -15,28 +15,37 @@ export default function OrderHistoryPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true)
-      try {
-        let orders: OrderData[] = []
-
-        if (user?.uid) {
-          orders = await getOrdersByUserId(user.uid)
-        } else if (deviceId) {
-          orders = await getOrdersByDeviceId(deviceId)
-        }
-
-        setFirebaseOrders(orders)
-      } catch (error) {
-        console.error("Error fetching orders:", error)
-        setFirebaseOrders([])
-      } finally {
-        setLoading(false)
-      }
+  const fetchOrders = async () => {
+    // 1. Local Storage se user_id uthayein
+    const localStorageUid = localStorage.getItem("userUID");
+console.log("Stored UID from local storage:", localStorageUid);
+    // 2. Strict Check: Agar localStorage mein UID nahi hai, to agay mat barhein
+    if (!localStorageUid) {
+      console.log("No user_id found in local storage. Skipping fetch.");
+      setFirebaseOrders([]);
+      setLoading(false);
+      return;
     }
 
-    fetchOrders()
-  }, [user?.uid, deviceId])
+    // 3. Agar UID mil gayi, to data fetch karein
+    setLoading(true);
+    try {
+      console.log("Fetching orders for stored UID:", localStorageUid);
+      
+      // Sirf is specific UID ke orders fetch honge
+      const orders = await getOrdersByUserId(localStorageUid);
+      
+      setFirebaseOrders(orders);
+    } catch (error) {
+      console.error("Error fetching orders by storage UID:", error);
+      setFirebaseOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOrders();
+}, [user?.uid]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

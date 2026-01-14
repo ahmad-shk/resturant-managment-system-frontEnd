@@ -49,6 +49,7 @@ export const registerUser = async (email: string, password: string, name: string
 }
 
 export const loginUser = async (email: string, password: string): Promise<UserCredential> => {
+   
   return signInWithEmailAndPassword(auth, email, password)
 }
 

@@ -7,6 +7,8 @@ import { useCart } from "@/app/providers"
 import { useLanguage } from "@/lib/use-language"
 import { useAuth } from "@/lib/auth-context"
 import type { Language } from "@/lib/translations"
+import { auth } from "@/lib/firebase" 
+import { signOut as firebaseSignOut } from "firebase/auth"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -23,15 +25,27 @@ export default function Navbar() {
     { code: "nl", name: "Nederlands" },
   ]
 
-  const handleLogout = async () => {
-    try {
-      await signOut()
-      setIsUserMenuOpen(false)
-    } catch (error) {
-      console.error("Error logging out:", error)
-    }
-  }
+ const handleLogout = async () => {
+  try {
+    // 1. Firebase se logout
+    await firebaseSignOut(auth)
 
+    // 2. Local Storage se UID khatam
+    localStorage.removeItem("user_id")
+    localStorage.removeItem("userUID") // Dono check karlein jo aap use kar rahe hain
+
+    // 3. UI States reset
+    setIsUserMenuOpen(false)
+    setIsOpen(false)
+
+    console.log("Logged out and local data cleared")
+    
+    // Refresh ya Redirect (Optional)
+    window.location.href = "/auth/login" 
+  } catch (error) {
+    console.error("Error logging out:", error)
+  }
+}
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-orange-50 to-white border-b-2 border-orange-200 shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-4">
