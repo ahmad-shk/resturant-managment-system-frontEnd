@@ -9,14 +9,14 @@ export const translations = {
     language: "Language",
 
     // Home Page
-    welcome: "Welcome to Swirly",
+    welcome: "Welcome to Admin",
     tagline: "Say goodbye to your hunger!",
     description:
       "Order healthy and tasty food online whenever and wherever you want. Fresh ingredients, authentic recipes, and rapid delivery at your doorstep.",
     orderNow: "Order Now",
 
     // Features
-    whyChoose: "Why Choose Swirly?",
+    whyChoose: "Why Choose Admin?",
     fastDelivery: "Fast Delivery",
     fastDeliveryDesc: "Get your food within 30-45 minutes",
     freshIngredients: "Fresh Ingredients",
@@ -65,13 +65,13 @@ export const translations = {
     language: "语言",
 
     // 首页
-    welcome: "欢迎来到Swirly",
+    welcome: "欢迎来到Admin",
     tagline: "告别你的饥饿!",
     description: "随时随地在线订购健康美味的食物。新鲜食材，正宗食谱，快速送达您的门步。",
     orderNow: "立即订购",
 
     // 功能
-    whyChoose: "为什么选择Swirly?",
+    whyChoose: "为什么选择Admin?",
     fastDelivery: "快速配送",
     fastDeliveryDesc: "在30-45分钟内获得您的食物",
     freshIngredients: "新鲜食材",
@@ -119,14 +119,14 @@ export const translations = {
     language: "Sprache",
 
     // Startseite
-    welcome: "Willkommen bei Swirly",
+    welcome: "Willkommen bei Admin",
     tagline: "Verabschieden Sie sich von Ihrem Hunger!",
     description:
       "Bestellen Sie gesundes und leckeres Essen online, wann und wo Sie wollen. Frische Zutaten, authentische Rezepte und schnelle Lieferung an Ihre Tür.",
     orderNow: "Jetzt bestellen",
 
     // Funktionen
-    whyChoose: "Warum Swirly wählen?",
+    whyChoose: "Warum Admin wählen?",
     fastDelivery: "Schnelle Lieferung",
     fastDeliveryDesc: "Erhalten Sie Ihr Essen innerhalb von 30-45 Minuten",
     freshIngredients: "Frische Zutaten",
@@ -175,14 +175,14 @@ export const translations = {
     language: "Taal",
 
     // Startpagina
-    welcome: "Welkom bij Swirly",
+    welcome: "Welkom bij Admin",
     tagline: "Zeg vaarwel tegen je honger!",
     description:
       "Bestel gezond en lekker eten online wanneer en waar je maar wilt. Verse ingrediënten, authentieke recepten en snelle bezorging aan je deur.",
     orderNow: "Bestel nu",
 
     // Functies
-    whyChoose: "Waarom Swirly kiezen?",
+    whyChoose: "Waarom Admin kiezen?",
     fastDelivery: "Snelle bezorging",
     fastDeliveryDesc: "Ontvang je eten binnen 30-45 minuten",
     freshIngredients: "Verse ingrediënten",

@@ -55,7 +55,7 @@ export default function ContactPage() {
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Get in touch with Swirly - Your favorite food delivery service
+            Get in touch with Admin - Your favorite food delivery service
           </p>
         </div>
 
@@ -71,8 +71,8 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
-                <a href="mailto:info@swirly.com" className="text-orange-600 hover:text-orange-700 font-medium">
-                  info@swirly.com
+                <a href="mailto:info@Admin.com" className="text-orange-600 hover:text-orange-700 font-medium">
+                  info@Admin.com
                 </a>
                 <p className="text-sm text-gray-600 mt-1">We respond within 24 hours</p>
               </div>
@@ -128,9 +128,9 @@ export default function ContactPage() {
             </div>
 
             <div className="pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">About Swirly</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">About Admin</h3>
               <p className="text-gray-600 leading-relaxed">
-                Swirly is a premium food delivery service dedicated to bringing delicious meals from your favorite
+                Admin is a premium food delivery service dedicated to bringing delicious meals from your favorite
                 restaurants right to your doorstep. With fast delivery, fresh food, and excellent customer service,
                 we're committed to making your dining experience exceptional.
               </p>

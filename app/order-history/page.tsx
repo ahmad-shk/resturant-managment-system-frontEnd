@@ -111,7 +111,7 @@ console.log("Stored UID from local storage:", localStorageUid);
               <ShoppingBag className="w-10 h-10 text-orange-600" />
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">{t("noOrders")}</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">Start ordering delicious food from Swirly today!</p>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">Start ordering delicious food from Admin today!</p>
             <Link
               href="/foods"
               className="inline-block px-8 py-3 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all"

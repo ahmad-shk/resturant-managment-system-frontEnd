@@ -221,7 +221,7 @@ export default function TrackingContent() {
             <h2 className="text-3xl font-bold mb-2">Order Delivered!</h2>
             <p className="text-green-50 mb-6">Your food has been delivered to your doorstep. Enjoy your meal!</p>
             <div className="inline-block bg-white bg-opacity-20 backdrop-blur rounded-lg px-6 py-3 border border-white border-opacity-30">
-              <p className="text-lg font-semibold">Thank you for ordering with Swirly! 🙏</p>
+              <p className="text-lg font-semibold">Thank you for ordering with Admin! 🙏</p>
             </div>
           </div>
         )}
