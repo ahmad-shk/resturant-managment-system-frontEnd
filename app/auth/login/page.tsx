@@ -43,6 +43,7 @@ export default function LoginPage() {
       console.log("User UID:", userCredential.user.uid)
       console.log("User Email:", userCredential.user.email)
       localStorage.setItem("userUID", userCredential.user.uid)
+      
       addToast("Login successful!", "success")
       router.push("/foods")
     } catch (error: any) {
