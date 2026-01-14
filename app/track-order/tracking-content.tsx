@@ -20,6 +20,14 @@ interface OrderStatus {
   active: boolean
 }
 
+const STATUS_TO_STAGE: Record<string, number> = {
+  confirmed: 0,
+  preparing: 1,
+  ready: 2,
+  "on-the-way": 3,
+  delivered: 4,
+}
+
 export default function TrackingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -35,17 +43,40 @@ export default function TrackingContent() {
         const firebaseOrder = await getOrderById(orderId)
         if (firebaseOrder) {
           setOrder(firebaseOrder)
-          setCurrentStage(firebaseOrder.currentStatusIndex || 0)
+          const stage =
+            STATUS_TO_STAGE[firebaseOrder.status] !== undefined
+              ? STATUS_TO_STAGE[firebaseOrder.status]
+              : firebaseOrder.currentStatusIndex || 0
+          setCurrentStage(stage)
+          console.log("[v0] Order loaded:", orderId, "Status:", firebaseOrder.status, "Stage:", stage)
 
-          // Only update status when database changes, not on automatic timer
+          // Subscribe to real-time updates
           const orderRef = ref(rtdb, `orders/${orderId}`)
-          unsubscribeRef.current = onValue(orderRef, (snapshot) => {
-            if (snapshot.exists()) {
-              const updatedOrder = snapshot.val()
-              setOrder(updatedOrder)
-              setCurrentStage(updatedOrder.currentStatusIndex || 0)
-            }
-          })
+          unsubscribeRef.current = onValue(
+            orderRef,
+            (snapshot) => {
+              if (snapshot.exists()) {
+                const updatedOrder = snapshot.val()
+                setOrder(updatedOrder)
+                const newStage =
+                  STATUS_TO_STAGE[updatedOrder.status] !== undefined
+                    ? STATUS_TO_STAGE[updatedOrder.status]
+                    : updatedOrder.currentStatusIndex || 0
+                setCurrentStage(newStage)
+                console.log(
+                  "[v0] Real-time update received:",
+                  orderId,
+                  "New Status:",
+                  updatedOrder.status,
+                  "New Stage:",
+                  newStage,
+                )
+              }
+            },
+            (error) => {
+              console.error("[v0] Error listening to order updates:", error)
+            },
+          )
         }
       } catch (error) {
         console.error("Error fetching order:", error)
@@ -207,7 +238,6 @@ export default function TrackingContent() {
                       )}
                     </div>
                     <p className="text-sm text-gray-600 mb-2">{stage.description}</p>
-                    
                   </div>
                 </div>
               </div>

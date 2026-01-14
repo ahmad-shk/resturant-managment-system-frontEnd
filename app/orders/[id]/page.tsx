@@ -3,9 +3,11 @@
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, MapPin, Clock, Package } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { getOrderById } from "@/lib/firebase-utils"
 import type { OrderData } from "@/lib/firebase-utils"
+import { ref, onValue } from "firebase/database"
+import { rtdb } from "@/lib/firebase"
 
 const STATUS_STEPS = ["Confirmed", "Preparing", "Ready", "On The Way", "Delivered"]
 
@@ -20,13 +22,45 @@ export default function OrderDetailsPage() {
   const router = useRouter()
   const [order, setOrder] = useState<OrderData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [statusHistory, setStatusHistory] = useState<Array<{ status: string; timestamp: number }>>([])
+  const unsubscribeRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         if (id) {
           const fetchedOrder = await getOrderById(id as string)
-          setOrder(fetchedOrder || null)
+          if (fetchedOrder) {
+            setOrder(fetchedOrder)
+            console.log("[v0] Order fetched:", fetchedOrder.id, "status:", fetchedOrder.status)
+
+            const orderRef = ref(rtdb, `orders/${id}`)
+            unsubscribeRef.current = onValue(
+              orderRef,
+              (snapshot) => {
+                if (snapshot.exists()) {
+                  const updatedOrder = snapshot.val()
+                  console.log("[v0] Order real-time update:", updatedOrder.status)
+                  setOrder((prevOrder) => ({
+                    ...prevOrder,
+                    ...updatedOrder,
+                  }))
+
+                  // Track status changes
+                  setStatusHistory((prev) => {
+                    const lastEntry = prev[prev.length - 1]
+                    if (!lastEntry || lastEntry.status !== updatedOrder.status) {
+                      return [...prev, { status: updatedOrder.status, timestamp: new Date().getTime() }]
+                    }
+                    return prev
+                  })
+                }
+              },
+              (error) => {
+                console.error("[v0] Error listening to order:", error)
+              },
+            )
+          }
         }
       } catch (error) {
         console.error("Error fetching order:", error)
@@ -36,6 +70,12 @@ export default function OrderDetailsPage() {
     }
 
     fetchOrder()
+
+    return () => {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current()
+      }
+    }
   }, [id])
 
   if (loading) {
@@ -87,6 +127,10 @@ export default function OrderDetailsPage() {
                 <Clock className="w-4 h-4" />
                 Ordered on {formatDate(order.createdAt)}
               </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-green-600">Real-time Updates Active</span>
             </div>
           </div>
 

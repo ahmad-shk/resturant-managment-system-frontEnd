@@ -13,6 +13,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Admin - Food Delivery",
   description: "Order delicious food from Admin restaurant",
+    generator: 'v0.app'
 }
 
 export default function RootLayout({

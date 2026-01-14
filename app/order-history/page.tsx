@@ -1,51 +1,81 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
 import { ShoppingBag, User, ChevronRight, Calendar, DollarSign } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
-import { getOrdersByUserId, getOrdersByDeviceId } from "@/lib/firebase-utils"
+import { getOrdersByUserId } from "@/lib/firebase-utils"
 import { useLanguage } from "@/lib/use-language"
 import type { OrderData } from "@/lib/firebase-utils"
+import { ref, onValue } from "firebase/database"
+import { rtdb } from "@/lib/firebase"
 
 export default function OrderHistoryPage() {
   const { user, deviceId } = useAuth()
   const { t } = useLanguage()
   const [firebaseOrders, setFirebaseOrders] = useState<OrderData[]>([])
   const [loading, setLoading] = useState(true)
+  const unsubscribesRef = useRef<(() => void)[]>([])
+  const ordersTrackedRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
-  const fetchOrders = async () => {
-    // 1. Local Storage se user_id uthayein
-    const localStorageUid = localStorage.getItem("userUID");
-console.log("Stored UID from local storage:", localStorageUid);
-    // 2. Strict Check: Agar localStorage mein UID nahi hai, to agay mat barhein
-    if (!localStorageUid) {
-      console.log("No user_id found in local storage. Skipping fetch.");
-      setFirebaseOrders([]);
-      setLoading(false);
-      return;
+    const fetchOrders = async () => {
+      const localStorageUid = localStorage.getItem("userUID")
+      console.log("[v0] Fetching orders for UID:", localStorageUid)
+
+      if (!localStorageUid) {
+        console.log("[v0] No user_id found in local storage")
+        setFirebaseOrders([])
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      try {
+        const orders = await getOrdersByUserId(localStorageUid)
+        console.log("[v0] Fetched orders:", orders.length)
+        setFirebaseOrders(orders)
+
+        unsubscribesRef.current.forEach((unsubscribe) => unsubscribe())
+        unsubscribesRef.current = []
+        ordersTrackedRef.current.clear()
+
+        const newUnsubscribes: (() => void)[] = []
+        orders.forEach((order) => {
+          if (!ordersTrackedRef.current.has(order.id)) {
+            ordersTrackedRef.current.add(order.id)
+            console.log("[v0] Setting up listener for order:", order.id)
+
+            const orderRef = ref(rtdb, `orders/${order.id}`)
+            const unsubscribe = onValue(orderRef, (snapshot) => {
+              if (snapshot.exists()) {
+                const updatedOrder = snapshot.val()
+                console.log("[v0] Order updated:", updatedOrder.id, "status:", updatedOrder.status)
+
+                setFirebaseOrders((prevOrders) =>
+                  prevOrders.map((o) => (o.id === updatedOrder.id ? { ...o, ...updatedOrder } : o)),
+                )
+              }
+            })
+            newUnsubscribes.push(unsubscribe)
+          }
+        })
+
+        unsubscribesRef.current = newUnsubscribes
+      } catch (error) {
+        console.error("Error fetching orders by storage UID:", error)
+        setFirebaseOrders([])
+      } finally {
+        setLoading(false)
+      }
     }
 
-    // 3. Agar UID mil gayi, to data fetch karein
-    setLoading(true);
-    try {
-      console.log("Fetching orders for stored UID:", localStorageUid);
-      
-      // Sirf is specific UID ke orders fetch honge
-      const orders = await getOrdersByUserId(localStorageUid);
-      
-      setFirebaseOrders(orders);
-    } catch (error) {
-      console.error("Error fetching orders by storage UID:", error);
-      setFirebaseOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchOrders()
 
-  fetchOrders();
-}, [user?.uid]);
+    return () => {
+      unsubscribesRef.current.forEach((unsubscribe) => unsubscribe())
+    }
+  }, [user?.uid])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -99,7 +129,7 @@ console.log("Stored UID from local storage:", localStorageUid);
             </div>
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">{t("orderHistoryTitle")}</h1>
-              <p className="text-gray-600 mt-2">View all your orders in one place</p>
+              <p className="text-gray-600 mt-2">View all your orders in one place • Updates in real-time</p>
             </div>
           </div>
         </div>
@@ -124,7 +154,7 @@ console.log("Stored UID from local storage:", localStorageUid);
             {firebaseOrders.map((order) => (
               <div
                 key={order.id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"
+                className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden animate-fade-in"
               >
                 <div className="p-6 sm:p-8">
                   <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -152,14 +182,22 @@ console.log("Stored UID from local storage:", localStorageUid);
                       </div>
                     </div>
 
-                    {/* Status */}
+                    {/* Status - Now with real-time indicator */}
                     <div>
                       <p className="text-sm text-gray-600 font-medium mb-1">{t("orderStatus")}</p>
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(order.status)}`}
-                      >
-                        {order.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(order.status)}`}
+                        >
+                          {order.status}
+                        </span>
+                        {order.status !== "delivered" && (
+                          <span className="inline-flex items-center gap-1">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                            <span className="text-xs text-green-600 font-medium">Live</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
