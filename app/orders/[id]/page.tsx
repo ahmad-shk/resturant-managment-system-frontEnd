@@ -133,7 +133,7 @@ export default function OrderDetailsPage() {
                     <h3 className="font-semibold text-gray-900">{item.name}</h3>
                     <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                   </div>
-                  <p className="font-semibold text-gray-900">₹{item.price * item.quantity}</p>
+                  <p className="font-semibold text-gray-900">${item.price * item.quantity}</p>
                 </div>
               ))}
             </div>
@@ -142,19 +142,19 @@ export default function OrderDetailsPage() {
             <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span>₹{order.subtotal}</span>
+                <span>${order.subtotal}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Tax (5%)</span>
-                <span>₹{order.tax}</span>
+                <span>${order.tax}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Delivery</span>
-                <span>{order.delivery === 0 ? "FREE" : `₹${order.delivery}`}</span>
+                <span>{order.delivery === 0 ? "FREE" : `$${order.delivery}`}</span>
               </div>
               <div className="flex justify-between text-lg font-bold text-gray-900 pt-3 border-t border-gray-200">
                 <span>Total</span>
-                <span className="text-primary">₹{order.total}</span>
+                <span className="text-primary">${order.total}</span>
               </div>
             </div>
           </div>
@@ -190,19 +190,19 @@ export default function OrderDetailsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">₹{order.subtotal}</span>
+                  <span className="font-medium">${order.subtotal}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Tax</span>
-                  <span className="font-medium">₹{order.tax}</span>
+                  <span className="font-medium">${order.tax}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Delivery</span>
-                  <span className="font-medium">{order.delivery === 0 ? "FREE" : `₹${order.delivery}`}</span>
+                  <span className="font-medium">{order.delivery === 0 ? "FREE" : `$${order.delivery}`}</span>
                 </div>
                 <div className="border-t border-gray-200 pt-3 flex items-center justify-between">
                   <span className="font-semibold text-gray-900">Total Amount</span>
-                  <span className="font-bold text-primary text-lg">₹{order.total}</span>
+                  <span className="font-bold text-primary text-lg">${order.total}</span>
                 </div>
               </div>
             </div>

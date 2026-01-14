@@ -148,7 +148,7 @@ console.log("Stored UID from local storage:", localStorageUid);
                       <DollarSign className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-sm text-gray-600 font-medium mb-1">{t("orderTotal")}</p>
-                        <p className="text-lg font-semibold text-gray-900">₹{order.total}</p>
+                        <p className="text-lg font-semibold text-gray-900">${order.total}</p>
                       </div>
                     </div>
 
@@ -158,7 +158,7 @@ console.log("Stored UID from local storage:", localStorageUid);
                       <span
                         className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(order.status)}`}
                       >
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("-", " ")}
+                        {order.status}
                       </span>
                     </div>
                   </div>
@@ -174,7 +174,7 @@ console.log("Stored UID from local storage:", localStorageUid);
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
-                            <p className="text-xs text-gray-600">₹{item.price}</p>
+                            <p className="text-xs text-gray-600">${item.price}</p>
                           </div>
                         </div>
                       ))}
@@ -186,19 +186,19 @@ console.log("Stored UID from local storage:", localStorageUid);
                     <div className="grid sm:grid-cols-2 gap-4 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-semibold text-gray-900">₹{order.subtotal}</span>
+                        <span className="font-semibold text-gray-900">${order.subtotal}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Tax:</span>
-                        <span className="font-semibold text-gray-900">₹{order.tax}</span>
+                        <span className="font-semibold text-gray-900">${order.tax}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Delivery:</span>
-                        <span className="font-semibold text-gray-900">₹{order.delivery}</span>
+                        <span className="font-semibold text-gray-900">${order.delivery}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-semibold text-gray-900">Total:</span>
-                        <span className="font-bold text-orange-600 text-lg">₹{order.total}</span>
+                        <span className="font-bold text-orange-600 text-lg">${order.total}</span>
                       </div>
                     </div>
                   </div>

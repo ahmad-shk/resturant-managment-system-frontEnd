@@ -47,7 +47,7 @@ export default function CheckoutPage() {
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const tax = Math.round(subtotal * 0.05)
-  const delivery = subtotal > 500 ? 0 : 40
+  const delivery = subtotal > 30 ? 0 : 10
   const total = subtotal + tax + delivery
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -396,21 +396,21 @@ export default function CheckoutPage() {
               <div className="space-y-3 pb-4 border-b border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">₹{subtotal}</span>
+                  <span className="font-medium">${subtotal}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tax (5%)</span>
-                  <span className="font-medium">₹{tax}</span>
+                  <span className="text-muted-foreground">Tax</span>
+                  <span className="font-medium">${tax}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Delivery</span>
-                  <span className="font-medium">{delivery === 0 ? "FREE" : `₹${delivery}`}</span>
+                  <span className="font-medium">{delivery === 0 ? "FREE" : `$${delivery}`}</span>
                 </div>
               </div>
 
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span className="text-primary">₹{total}</span>
+                <span className="text-primary">${total}</span>
               </div>
 
               <button

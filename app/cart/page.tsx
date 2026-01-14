@@ -10,7 +10,7 @@ export default function CartPage() {
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const tax = Math.round(subtotal * 0.05)
-  const delivery = subtotal > 500 ? 0 : 40
+  const delivery = subtotal > 50 ? 0 : 10
   const total = subtotal + tax + delivery
 
   return (
@@ -37,7 +37,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground">₹{item.price}</p>
+                    <p className="text-sm text-muted-foreground">${item.price}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -69,20 +69,20 @@ export default function CartPage() {
               <div className="space-y-3 mb-4 pb-4 border-b border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>₹{subtotal}</span>
+                  <span>${subtotal}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tax (5%)</span>
-                  <span>₹{tax}</span>
+                  <span className="text-muted-foreground">Tax</span>
+                  <span>${tax}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Delivery</span>
-                  <span>{delivery === 0 ? "FREE" : `₹${delivery}`}</span>
+                  <span>{delivery === 0 ? "FREE" : `$${delivery}`}</span>
                 </div>
               </div>
               <div className="flex justify-between mb-6 text-lg font-bold">
                 <span>Total</span>
-                <span className="text-primary">₹{total}</span>
+                <span className="text-primary">${total}</span>
               </div>
               <Link href="/checkout">
                 <button className="w-full btn-primary">Proceed to Checkout</button>

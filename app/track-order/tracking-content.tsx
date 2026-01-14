@@ -207,7 +207,7 @@ export default function TrackingContent() {
                       )}
                     </div>
                     <p className="text-sm text-gray-600 mb-2">{stage.description}</p>
-                    <p className="text-xs text-gray-500 font-mono">Est. Time: {stage.time}</p>
+                    
                   </div>
                 </div>
               </div>

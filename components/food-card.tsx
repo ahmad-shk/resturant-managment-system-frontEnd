@@ -64,7 +64,7 @@ export default function FoodCard({ food, onCardClick }: { food: Food; onCardClic
 
         {/* Price Badge */}
         <div className="absolute bottom-4 left-4 bg-white rounded-xl px-3 py-2 shadow-lg font-bold text-primary text-lg">
-          ₹{food.price}
+          ${food.price}
         </div>
       </div>
 
