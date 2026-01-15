@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState, useRef } from "react"
-import { Truck, Home, ChefHat } from "lucide-react"
+import { Truck, Home, ChefHat, Check } from "lucide-react"
 import Link from "next/link"
 import { getOrderById } from "@/lib/firebase-utils"
 import { ref, onValue } from "firebase/database"
@@ -25,7 +24,7 @@ const STATUS_TO_STAGE: Record<string, number> = {
   preparing: 1,
   ready: 2,
   "on-the-way": 3,
-  delivered: 4,
+  completed: 4, 
 }
 
 export default function TrackingContent() {
@@ -43,40 +42,25 @@ export default function TrackingContent() {
         const firebaseOrder = await getOrderById(orderId)
         if (firebaseOrder) {
           setOrder(firebaseOrder)
-          const stage =
-            STATUS_TO_STAGE[firebaseOrder.status] !== undefined
-              ? STATUS_TO_STAGE[firebaseOrder.status]
-              : firebaseOrder.currentStatusIndex || 0
+          const statusKey = (firebaseOrder.status || "").toLowerCase()
+          const stage = STATUS_TO_STAGE[statusKey] !== undefined 
+                        ? STATUS_TO_STAGE[statusKey] 
+                        : (firebaseOrder.currentStatusIndex || 0)
+          
           setCurrentStage(stage)
-          console.log("[v0] Order loaded:", orderId, "Status:", firebaseOrder.status, "Stage:", stage)
 
-          // Subscribe to real-time updates
           const orderRef = ref(rtdb, `orders/${orderId}`)
-          unsubscribeRef.current = onValue(
-            orderRef,
-            (snapshot) => {
-              if (snapshot.exists()) {
-                const updatedOrder = snapshot.val()
-                setOrder(updatedOrder)
-                const newStage =
-                  STATUS_TO_STAGE[updatedOrder.status] !== undefined
-                    ? STATUS_TO_STAGE[updatedOrder.status]
-                    : updatedOrder.currentStatusIndex || 0
-                setCurrentStage(newStage)
-                console.log(
-                  "[v0] Real-time update received:",
-                  orderId,
-                  "New Status:",
-                  updatedOrder.status,
-                  "New Stage:",
-                  newStage,
-                )
-              }
-            },
-            (error) => {
-              console.error("[v0] Error listening to order updates:", error)
-            },
-          )
+          unsubscribeRef.current = onValue(orderRef, (snapshot) => {
+            if (snapshot.exists()) {
+              const updatedOrder = snapshot.val()
+              setOrder(updatedOrder)
+              const updatedStatusKey = (updatedOrder.status || "").toLowerCase()
+              const newStage = STATUS_TO_STAGE[updatedStatusKey] !== undefined 
+                               ? STATUS_TO_STAGE[updatedStatusKey] 
+                               : (updatedOrder.currentStatusIndex || 0)
+              setCurrentStage(newStage)
+            }
+          })
         }
       } catch (error) {
         console.error("Error fetching order:", error)
@@ -86,14 +70,11 @@ export default function TrackingContent() {
     }
 
     fetchAndListenToOrder()
-
-    // Cleanup subscription on unmount
-    return () => {
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current()
-      }
-    }
+    return () => unsubscribeRef.current?.()
   }, [orderId])
+
+  // --- LOGIC: Agar status 'completed' (stage 4) hai, to sab ko green kar do ---
+  const isOrderFullyCompleted = currentStage >= 4;
 
   const stages: OrderStatus[] = [
     {
@@ -102,8 +83,8 @@ export default function TrackingContent() {
       description: "Your order has been placed successfully",
       icon: <ChefHat className="w-6 h-6" />,
       time: "00:00",
-      completed: currentStage > 0,
-      active: currentStage === 0,
+      completed: isOrderFullyCompleted || currentStage > 0,
+      active: !isOrderFullyCompleted && currentStage === 0,
     },
     {
       stage: 1,
@@ -111,8 +92,8 @@ export default function TrackingContent() {
       description: "Our chef is preparing your delicious meal",
       icon: <ChefHat className="w-6 h-6" />,
       time: "00:20",
-      completed: currentStage > 1,
-      active: currentStage === 1,
+      completed: isOrderFullyCompleted || currentStage > 1,
+      active: !isOrderFullyCompleted && currentStage === 1,
     },
     {
       stage: 2,
@@ -120,8 +101,8 @@ export default function TrackingContent() {
       description: "Your order is ready and rider is picking it up",
       icon: <Truck className="w-6 h-6" />,
       time: "00:45",
-      completed: currentStage > 2,
-      active: currentStage === 2,
+      completed: isOrderFullyCompleted || currentStage > 2,
+      active: !isOrderFullyCompleted && currentStage === 2,
     },
     {
       stage: 3,
@@ -129,21 +110,19 @@ export default function TrackingContent() {
       description: "Your order is on the way to your location",
       icon: <Truck className="w-6 h-6" />,
       time: "01:30",
-      completed: currentStage > 3,
-      active: currentStage === 3,
+      completed: isOrderFullyCompleted || currentStage > 3,
+      active: !isOrderFullyCompleted && currentStage === 3,
     },
     {
       stage: 4,
-      title: "Arrived",
-      description: "Your order has reached your location",
+      title: "Completed",
+      description: "Your order has been delivered successfully",
       icon: <Home className="w-6 h-6" />,
       time: "02:00",
-      completed: currentStage > 4,
-      active: currentStage === 4,
+      completed: isOrderFullyCompleted,
+      active: !isOrderFullyCompleted && currentStage === 4,
     },
   ]
-
-  const isOrderComplete = currentStage >= 4
 
   if (loading) {
     return (
@@ -161,10 +140,7 @@ export default function TrackingContent() {
       <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Order Not Found</h1>
-          <p className="text-gray-600 mb-6">The order you're looking for doesn't exist.</p>
-          <Link href="/foods" className="text-primary hover:underline font-semibold">
-            Continue Shopping
-          </Link>
+          <Link href="/foods" className="text-primary hover:underline font-semibold">Continue Shopping</Link>
         </div>
       </main>
     )
@@ -181,98 +157,94 @@ export default function TrackingContent() {
           </p>
           <div className="inline-block bg-white rounded-lg px-6 py-3 border-2 border-primary shadow-lg">
             <p className="text-lg font-bold text-primary">
-              {isOrderComplete ? "Order Delivered! 🎉" : "Status updates in real-time"}
+              {isOrderFullyCompleted ? "Order Completed! 🎉" : "Status updates in real-time"}
             </p>
           </div>
         </div>
 
         {/* Timeline */}
         <div className="space-y-6 mb-12">
-          {stages.map((stage, index) => (
-            <div key={stage.stage} className="relative">
-              {index < stages.length - 1 && (
-                <div
-                  className={`absolute left-8 top-20 w-1 h-20 transition-all duration-500 ${
-                    stage.completed ? "bg-green-500" : stage.active ? "bg-blue-400" : "bg-gray-300"
-                  }`}
-                />
-              )}
+          {stages.map((stage, index) => {
+            const showCheckmark = stage.completed;
+            const isActive = stage.active;
 
-              {/* Stage Card */}
-              <div
-                className={`relative p-6 rounded-xl transition-all duration-500 border-2 ${
-                  stage.completed
-                    ? "bg-green-50 border-green-300 shadow-md"
-                    : stage.active
-                      ? "bg-blue-50 border-blue-400 shadow-lg ring-2 ring-blue-200"
-                      : "bg-white border-gray-200"
-                }`}
-              >
-                <div className="flex gap-4">
-                  {/* Icon Circle */}
+            return (
+              <div key={stage.stage} className="relative">
+                {index < stages.length - 1 && (
                   <div
-                    className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-500 ${
-                      stage.completed
-                        ? "bg-green-500 text-white"
-                        : stage.active
-                          ? "bg-blue-500 text-white animate-pulse"
-                          : "bg-gray-300 text-gray-600"
+                    className={`absolute left-8 top-20 w-1 h-20 transition-all duration-500 ${
+                      stage.completed ? "bg-green-500" : isActive ? "bg-blue-400" : "bg-gray-300"
                     }`}
-                  >
-                    {stage.completed ? "✓" : stage.active ? "..." : index + 1}
-                  </div>
+                  />
+                )}
 
-                  {/* Content */}
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-lg font-semibold text-gray-900">{stage.title}</h3>
-                      {stage.active && (
-                        <span className="text-xs font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
-                          In Progress
-                        </span>
-                      )}
-                      {stage.completed && (
-                        <span className="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                          Completed
-                        </span>
-                      )}
+                <div
+                  className={`relative p-6 rounded-xl transition-all duration-500 border-2 ${
+                    stage.completed
+                      ? "bg-green-50 border-green-300 shadow-md"
+                      : isActive
+                        ? "bg-blue-50 border-blue-400 shadow-lg ring-2 ring-blue-200"
+                        : "bg-white border-gray-200"
+                  }`}
+                >
+                  <div className="flex gap-4">
+                    <div
+                      className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-500 ${
+                        stage.completed
+                          ? "bg-green-500 text-white"
+                          : isActive
+                            ? "bg-blue-500 text-white animate-pulse"
+                            : "bg-gray-300 text-gray-600"
+                      }`}
+                    >
+                      {showCheckmark ? <Check className="w-8 h-8" /> : isActive ? "..." : index + 1}
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{stage.description}</p>
+
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="text-lg font-semibold text-gray-900">{stage.title}</h3>
+                        {isActive && (
+                          <span className="text-xs font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                            In Progress
+                          </span>
+                        )}
+                        {stage.completed && (
+                          <span className="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{stage.description}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
-        {isOrderComplete && (
-          <div className="bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl p-8 text-white text-center shadow-xl mb-8">
+        {isOrderFullyCompleted && (
+          <div className="bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl p-8 text-white text-center shadow-xl mb-8 animate-in fade-in zoom-in duration-500">
             <div className="text-5xl mb-4">🎉</div>
-            <h2 className="text-3xl font-bold mb-2">Order Delivered!</h2>
-            <p className="text-green-50 mb-6">Your food has been delivered to your doorstep. Enjoy your meal!</p>
+            <h2 className="text-3xl font-bold mb-2">Success!</h2>
+            <p className="text-green-50 mb-6">Your order has been completed successfully. Enjoy!</p>
             <div className="inline-block bg-white bg-opacity-20 backdrop-blur rounded-lg px-6 py-3 border border-white border-opacity-30">
-              <p className="text-lg font-semibold">Thank you for ordering with Admin! 🙏</p>
+              <p className="text-lg font-semibold">Thank you for ordering! 🙏</p>
             </div>
           </div>
         )}
 
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/foods">
-            <button className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition">
+            <button className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition shadow-md">
               Order Again
             </button>
           </Link>
           <Link href="/order-history">
-            <button className="px-6 py-3 bg-secondary text-white rounded-lg font-semibold hover:opacity-90 transition">
+            <button className="px-6 py-3 bg-gray-800 text-white rounded-lg font-semibold hover:opacity-90 transition shadow-md">
               My Orders
             </button>
           </Link>
-          <button
-            onClick={() => router.push("/")}
-            className="px-6 py-3 bg-gray-200 text-gray-900 rounded-lg font-semibold hover:bg-gray-300 transition"
-          >
-            Back to Home
-          </button>
         </div>
       </div>
     </main>

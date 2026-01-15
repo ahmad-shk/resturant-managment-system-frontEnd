@@ -21,10 +21,8 @@ export default function OrderHistoryPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       const localStorageUid = localStorage.getItem("userUID")
-      console.log("[v0] Fetching orders for UID:", localStorageUid)
 
       if (!localStorageUid) {
-        console.log("[v0] No user_id found in local storage")
         setFirebaseOrders([])
         setLoading(false)
         return
@@ -33,7 +31,7 @@ export default function OrderHistoryPage() {
       setLoading(true)
       try {
         const orders = await getOrdersByUserId(localStorageUid)
-        console.log("[v0] Fetched orders:", orders.length)
+        console.log("[v0] Fetched orders:", orders)
         setFirebaseOrders(orders)
 
         unsubscribesRef.current.forEach((unsubscribe) => unsubscribe())
@@ -87,7 +85,7 @@ export default function OrderHistoryPage() {
         return "bg-purple-100 text-purple-800"
       case "on-the-way":
         return "bg-orange-100 text-orange-800"
-      case "delivered":
+      case "completed":
         return "bg-green-100 text-green-800"
       default:
         return "bg-gray-100 text-gray-800"
@@ -193,8 +191,7 @@ export default function OrderHistoryPage() {
                         </span>
                         {order.status !== "delivered" && (
                           <span className="inline-flex items-center gap-1">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                            <span className="text-xs text-green-600 font-medium">Live</span>
+                            {/* <span className="text-xs text-green-600 font-medium">Live</span> */}
                           </span>
                         )}
                       </div>
