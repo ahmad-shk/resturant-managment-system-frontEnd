@@ -176,13 +176,13 @@ export default function OrderDetailsPage() {
                     <h4 className="font-bold text-gray-800 text-sm truncate">{item.name}</h4>
                     <p className="text-xs text-gray-500 font-medium">Qty: {item.quantity}</p>
                   </div>
-                  <p className="font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-bold text-gray-900">€{(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </div>
             <div className="mt-8 pt-6 border-t border-gray-100 flex justify-between items-center font-black text-xl">
               <span className="text-gray-900">Total Paid</span>
-              <span className="text-primary">${order.total}</span>
+              <span className="text-primary">€{order.total}</span>
             </div>
           </div>
 

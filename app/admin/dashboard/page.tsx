@@ -194,7 +194,7 @@ export default function AdminDashboard() {
                     <tr key={order.id} className="hover:bg-gray-50 transition-colors animate-fade-in">
                       <td className="px-6 py-4 font-mono text-sm font-semibold text-gray-900">{order.id}</td>
                       <td className="px-6 py-4 text-sm text-gray-600 font-medium">{order.customerName}</td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">${order.total}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">€{order.total}</td>
                       <td className="px-6 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 ${STATUS_COLORS[order.status]}`}

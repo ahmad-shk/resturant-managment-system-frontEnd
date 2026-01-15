@@ -45,11 +45,11 @@ export default function OrderStats({ userId }: OrderStatsProps) {
       </div>
       <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
         <p className="text-gray-600 text-sm font-medium mb-2">Total Spent</p>
-        <p className="text-3xl font-bold text-gray-900">${stats.totalSpent.toFixed(2)}</p>
+        <p className="text-3xl font-bold text-gray-900">€{stats.totalSpent.toFixed(2)}</p>
       </div>
       <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
         <p className="text-gray-600 text-sm font-medium mb-2">Average Order</p>
-        <p className="text-3xl font-bold text-gray-900">${stats.averageOrderValue.toFixed(2)}</p>
+        <p className="text-3xl font-bold text-gray-900">€{stats.averageOrderValue.toFixed(2)}</p>
       </div>
     </div>
   )

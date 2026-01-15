@@ -109,7 +109,7 @@ export default function ProductModal({ food, isOpen, onClose }: ProductModalProp
 
             {/* Price & Quantity */}
             <div className="space-y-4">
-              <div className="text-3xl font-bold text-primary">${food.price}</div>
+              <div className="text-3xl font-bold text-primary">€{food.price}</div>
 
               {/* Quantity Selector */}
               <div className="flex items-center gap-4 bg-gray-100 rounded-xl p-4 w-fit">
