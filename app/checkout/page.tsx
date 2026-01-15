@@ -124,7 +124,7 @@ export default function CheckoutPage() {
   const formatCardNumber = (value: string) => {
     return value
       .replace(/\s/g, "")
-      .replace(/(\d{4})/g, "$1 ")
+      .replace(/(\d{4})/g, "€1 ")
       .trim()
   }
 
@@ -396,21 +396,21 @@ export default function CheckoutPage() {
               <div className="space-y-3 pb-4 border-b border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">${subtotal}</span>
+                  <span className="font-medium">€{subtotal}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Tax</span>
-                  <span className="font-medium">${tax}</span>
+                  <span className="font-medium">€{tax}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Delivery</span>
-                  <span className="font-medium">{delivery === 0 ? "FREE" : `$${delivery}`}</span>
+                  <span className="font-medium">{delivery === 0 ? "FREE" : `€${delivery}`}</span>
                 </div>
               </div>
 
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span className="text-primary">${total}</span>
+                <span className="text-primary">€{total}</span>
               </div>
 
               <button

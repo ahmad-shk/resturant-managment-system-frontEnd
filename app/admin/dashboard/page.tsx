@@ -141,7 +141,7 @@ export default function AdminDashboard() {
             { label: "Preparing", value: stats.preparing, icon: "👨‍🍳", color: "yellow" },
             { label: "On The Way", value: stats.onWay, icon: "🚗", color: "orange" },
             { label: "Delivered", value: stats.delivered, icon: "✅", color: "green" },
-            { label: "Total Revenue", value: `$${stats.totalRevenue.toFixed(2)}`, icon: "💰", color: "purple" },
+            { label: "Total Revenue", value: `€${stats.totalRevenue.toFixed(2)}`, icon: "💰", color: "purple" },
           ].map((stat, idx) => (
             <div
               key={idx}
