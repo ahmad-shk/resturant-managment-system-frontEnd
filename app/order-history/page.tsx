@@ -173,7 +173,9 @@ export default function OrderHistoryPage() {
 
                     {/* Total Amount */}
                     <div className="flex items-start gap-3">
-                      <DollarSign className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="w-5 h-5 text-green-600 -mt-0.5 flex-shrink-0 text-lg font-semibold">
+  €
+</span>
                       <div>
                         <p className="text-sm text-gray-600 font-medium mb-1">{t("orderTotal")}</p>
                         <p className="text-lg font-semibold text-gray-900">€{order.total}</p>
