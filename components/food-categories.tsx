@@ -1,14 +1,16 @@
 "use client"
 
-import { UtensilsCrossed, Leaf, Dice1 as Rice, Cake, Flame } from "lucide-react"
+import { UtensilsCrossed, Leaf, Dice1 as Cupcake, Utensils, CookingPot, CupSoda, Soup, Salad, Coffee } from "lucide-react"
 
+// Updated categories based on your image
 const CATEGORIES = [
-  { id: "north-indian", label: "North Indian", icon: UtensilsCrossed },
-  { id: "south-indian", label: "South Indian", icon: Leaf },
-  { id: "rice", label: "Rice", icon: Rice },
-  { id: "desserts", label: "Desserts", icon: Cake },
-  { id: "snacks", label: "Snacks", icon: Flame },
-]
+  { id: "Appetizer", label: "Appetizer", icon: Utensils },
+  { id: "Main Course", label: "Main Course", icon: CookingPot },
+  { id: "Dessert", label: "Dessert", icon: Cupcake },
+  { id: "Beverage", label: "Beverage", icon: Coffee },
+  { id: "Salad", label: "Salad", icon: Salad },
+  { id: "Soup", label: "Soup", icon: Soup }
+];
 
 export default function FoodCategories({
   selectedCategory,
