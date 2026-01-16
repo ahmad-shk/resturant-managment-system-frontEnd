@@ -121,11 +121,11 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const formatCardNumber = (value: string) => {
+ const formatCardNumber = (value: string) => {
     return value
-      .replace(/\s/g, "")
-      .replace(/(\d{4})/g, "€1 ")
-      .trim()
+      .replace(/\D/g, "") // Sirf numbers rakho
+      .replace(/(\d{4})(?=\d)/g, "$1 ") // Har 4 digit baad space, lekin last mein nahi
+      .slice(0, 19); // 16 digits + 3 spaces
   }
 
   const formatExpiry = (value: string) => {
