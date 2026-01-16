@@ -126,7 +126,7 @@ export default function AdminDashboard() {
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
+            <h1 className="text-4xl font-bold text-gray-900">Tarim Dashboard</h1>
             <p className="text-gray-600 flex items-center gap-2 mt-1">
               <Zap className="w-4 h-4 text-green-600" />
               Manage and update order statuses in real-time

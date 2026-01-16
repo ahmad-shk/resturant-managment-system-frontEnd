@@ -8,11 +8,11 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="font-bold text-2xl mb-4 text-orange-600">Admin</h3>
+            <h3 className="font-bold text-2xl mb-4 text-orange-600">Tarim</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
               Premium food delivery service bringing delicious meals to your doorstep
             </p>
-            <p className="text-gray-500 text-xs mt-4">© 2026 Admin Food Delivery. All rights reserved.</p>
+            <p className="text-gray-500 text-xs mt-4">© 2026 Tarim Food Delivery. All rights reserved.</p>
           </div>
 
           {/* Quick Links */}
@@ -74,8 +74,8 @@ export default function Footer() {
             <div className="space-y-3 text-sm">
               <div className="flex gap-2 items-start">
                 <Mail className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                <a href="mailto:info@Admin.com" className="text-gray-600 hover:text-orange-600 transition">
-                  info@Admin.com
+                <a href="mailto:info@Tarim.com" className="text-gray-600 hover:text-orange-600 transition">
+                  info@Tarim.com
                 </a>
               </div>
               <div className="flex gap-2 items-start">
@@ -98,7 +98,7 @@ export default function Footer() {
 
         {/* Bottom Border */}
         <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-600">
-          <p>Admin © 2026 - Delivering happiness, one meal at a time</p>
+          <p>Tarim © 2026 - Delivering happiness, one meal at a time</p>
         </div>
       </div>
     </footer>

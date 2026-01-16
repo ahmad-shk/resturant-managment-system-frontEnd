@@ -9,14 +9,14 @@ export const translations = {
     language: "Language",
 
     // Home Page
-    welcome: "Welcome to Admin",
+    welcome: "Welcome to Tarim",
     tagline: "Say goodbye to your hunger!",
     description:
       "Order healthy and tasty food online whenever and wherever you want. Fresh ingredients, authentic recipes, and rapid delivery at your doorstep.",
     orderNow: "Order Now",
 
     // Features
-    whyChoose: "Why Choose Admin?",
+    whyChoose: "Why Choose Tarim?",
     fastDelivery: "Fast Delivery",
     fastDeliveryDesc: "Get your food within 30-45 minutes",
     freshIngredients: "Fresh Ingredients",
@@ -119,14 +119,14 @@ export const translations = {
     language: "Sprache",
 
     // Startseite
-    welcome: "Willkommen bei Admin",
+    welcome: "Willkommen bei Tarim",
     tagline: "Verabschieden Sie sich von Ihrem Hunger!",
     description:
       "Bestellen Sie gesundes und leckeres Essen online, wann und wo Sie wollen. Frische Zutaten, authentische Rezepte und schnelle Lieferung an Ihre Tür.",
     orderNow: "Jetzt bestellen",
 
     // Funktionen
-    whyChoose: "Warum Admin wählen?",
+    whyChoose: "Warum Tarim wählen?",
     fastDelivery: "Schnelle Lieferung",
     fastDeliveryDesc: "Erhalten Sie Ihr Essen innerhalb von 30-45 Minuten",
     freshIngredients: "Frische Zutaten",
@@ -175,14 +175,14 @@ export const translations = {
     language: "Taal",
 
     // Startpagina
-    welcome: "Welkom bij Admin",
+    welcome: "Welkom bij Tarim",
     tagline: "Zeg vaarwel tegen je honger!",
     description:
       "Bestel gezond en lekker eten online wanneer en waar je maar wilt. Verse ingrediënten, authentieke recepten en snelle bezorging aan je deur.",
     orderNow: "Bestel nu",
 
     // Functies
-    whyChoose: "Waarom Admin kiezen?",
+    whyChoose: "Waarom Tarim kiezen?",
     fastDelivery: "Snelle bezorging",
     fastDeliveryDesc: "Ontvang je eten binnen 30-45 minuten",
     freshIngredients: "Verse ingrediënten",

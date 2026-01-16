@@ -17,7 +17,7 @@ export default function Home() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-orange-600">
                 <Utensils className="w-5 h-5" />
-                <span className="text-sm font-semibold uppercase tracking-wide">Welcome to Admin</span>
+                <span className="text-sm font-semibold uppercase tracking-wide">Welcome to Tarim</span>
               </div>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 text-balance">{t("tagline")}</h1>
             </div>

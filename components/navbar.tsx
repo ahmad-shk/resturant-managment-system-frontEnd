@@ -56,7 +56,7 @@ export default function Navbar() {
               <Sparkles className="text-white w-6 h-6" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent hidden sm:block">
-              Admin
+              Tarim
             </span>
           </Link>
 

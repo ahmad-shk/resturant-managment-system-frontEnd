@@ -37,7 +37,7 @@ const Navbar = () => {
         <Link href="/">
           <a>
             <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-green-400 to-lime-300 bg-clip-text text-transparent cursor-pointer">
-              Admin
+              Tarim
             </h1>
           </a>
         </Link>

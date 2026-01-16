@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                         setFormData((prev) => ({ ...prev, cardNumber: formatted }))
                       }}
                       placeholder="1234 5678 9012 3456"
-                      maxLength="19"
+                      maxLength={19}
                       className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                     />
                   </div>
@@ -352,7 +352,7 @@ export default function CheckoutPage() {
                           setFormData((prev) => ({ ...prev, cardExpiry: formatted }))
                         }}
                         placeholder="MM/YY"
-                        maxLength="5"
+                        maxLength={5}
                         className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                       />
                     </div>
@@ -370,7 +370,7 @@ export default function CheckoutPage() {
                             }))
                           }}
                           placeholder="123"
-                          maxLength="3"
+                          maxLength={3}
                           className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                         />
                         <button
