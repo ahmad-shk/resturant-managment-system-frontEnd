@@ -36,6 +36,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const userCredential = await loginUser(formData.email, formData.password)
+      console.log("User logged in:", userCredential.user)
       localStorage.setItem("userUID", userCredential.user.uid)
       addToast("Login successful!", "success")
       router.push("/foods")

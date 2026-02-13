@@ -48,13 +48,18 @@ export default function SignupPage() {
     setLoading(true)
     try {
       const userExists = await checkUserExists(formData.email)
+      console.log("User exists:", userExists)
       if (userExists) {
         addToast("An account with this email already exists. Please login instead.", "error")
         setLoading(false)
         return
       }
 
-      await registerUser(formData.email, formData.password, formData.name)
+       const userCredential = await registerUser(formData.email, formData.password, formData.name)
+      if (userCredential && userCredential.user.uid) {
+        localStorage.setItem("userUID", userCredential.user.uid)
+      }
+      //
       addToast("Account created successfully!", "success")
       router.push("/foods")
     } catch (error: any) {
