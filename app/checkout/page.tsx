@@ -48,7 +48,7 @@ export default function CheckoutPage() {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const tax = Math.round(subtotal * 0.05)
   const delivery = subtotal > 30 ? 0 : 10
-  const total = subtotal + tax + delivery
+  const total = (subtotal + tax + delivery).toFixed(2);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

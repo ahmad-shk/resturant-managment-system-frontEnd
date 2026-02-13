@@ -11,7 +11,7 @@ export default function CartPage() {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const tax = Math.round(subtotal * 0.05)
   const delivery = subtotal > 50 ? 0 : 10
-  const total = subtotal + tax + delivery
+  const total = (subtotal + tax + delivery).toFixed(2);
 
   return (
     <main className="min-h-screen bg-background">
